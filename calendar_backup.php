@@ -7,32 +7,40 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-    <div class="container">
-<?php  
-        //今月を取得（例：2022年11月）
-        $now_month = date("Y年n月");
-?>
-        <h3 class="mb-5"><?php echo $now_month ?></h3>
-        <table class="table table-bordered">
-            <tr>
-                <th>日</th>
-                <th>月</th>
-                <th>火</th>
-                <th>水</th>
-                <th>木</th>
-                <th>金</th>
-                <th>土</th>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        </table>
+<div class="calendar">
+    <div class="controls">
+        <button onclick="showToday()">Today</button>
+        <button onclick="showPrevious()">＜</button>
     </div>
+    
+    @php
+        $today = \Carbon\Carbon::now();
+        $start_date = $today->subDays(5);
+        $end_date = $start_date->copy()->addDays(30);
+    @endphp
+    
+    @while ($start_date->lte($end_date))
+        <div class="day">
+            {{ $start_date->format('n/j') }}
+            <br>
+            {{ $start_date->isoFormat('ddd') }}
+        </div>
+        @php
+            $start_date->addDay();
+        @endphp
+    @endwhile
+</div>
+
+<script>
+    function showToday() {
+        window.location.reload();
+    }
+    
+    function showPrevious() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var days = parseInt(urlParams.get('days')) || 5;
+        window.location.href = window.location.pathname + '?days=' + (days - 1);
+    }
+</script>
 </body>
 </html>
